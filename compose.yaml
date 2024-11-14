@@ -8,6 +8,11 @@ services:
       - 5432:5432
     volumes:
       - db-data:/var/lib/postgresql/data
+  app:
+    image: inventory-manager-app
+    container_name: inventory-manager-app
+    ports:
+      - 80:8080
 
 volumes:
   db-data:
