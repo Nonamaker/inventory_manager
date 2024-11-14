@@ -1,13 +1,13 @@
 services:
   db:
-    image: postgres
+    image: inventory-manager-postgres
+    container_name: inventory-manager-postgres
     environment:
       POSTGRES_PASSWORD: changeme
     ports:
       - 5432:5432
     volumes:
-      - my-db-volume:/var/lib/postgresql
+      - db-data:/var/lib/postgresql/data
 
 volumes:
-  my-db-volume:
-
+  db-data:

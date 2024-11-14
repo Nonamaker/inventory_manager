@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build -t custom-postgres .
+docker build -t inventory-manager-postgres .
