@@ -1,7 +1,7 @@
 services:
   db:
-    image: inventory-manager-postgres
-    container_name: inventory-manager-postgres
+    image: inventory-manager-db
+    container_name: inventory-manager-db
     environment:
       POSTGRES_PASSWORD: changeme
     ports:
