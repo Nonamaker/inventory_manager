@@ -11,8 +11,8 @@ using app.Models;
 namespace app.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241115161348_init")]
-    partial class init
+    [Migration("20241115180627_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

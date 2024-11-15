@@ -12,5 +12,5 @@ public class AppDbContext : DbContext
     {
     }
 
-    public virtual DbSet<InventoryItem> Items { get; set; }
+    public virtual DbSet<InventoryItem> InventoryItems { get; set; }
 }

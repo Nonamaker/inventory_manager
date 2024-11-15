@@ -3,9 +3,14 @@ services:
     image: inventory-manager-db
     container_name: inventory-manager-db
     environment:
+      POSTGRES_DB: InventoryManager
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: changeme
+      POSTGRES_INITDB_ARGS: -A md5
     ports:
       - 5432:5432
+    healthcheck:
+      test: "pg_isready -q -U postgres"
     volumes:
       - db-data:/var/lib/postgresql/data
   app:
@@ -15,7 +20,7 @@ services:
       - 80:8080
     depends_on:
       db:
-        condition: service_started
+        condition: service_healthy
 
 volumes:
   db-data:
