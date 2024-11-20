@@ -14,9 +14,6 @@ public class InventoryItem
 {
 
     [Key]
-
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-
     public long Id { get; set; }
 
 
