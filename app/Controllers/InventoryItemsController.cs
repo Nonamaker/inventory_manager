@@ -15,26 +15,37 @@ namespace AspNetCoreWebAPI8.Controllers {
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<InventoryItem>>> GetInventoryItems()
+        public async Task<ActionResult<IEnumerable<InventoryItemDTO>>> GetInventoryItems()
         {
             if (_context.InventoryItems == null)
             {
                 return NotFound();
             }
-            return await _context.InventoryItems.ToListAsync();
+            return await _context.InventoryItems
+                .Select(x => InventoryItemToDTO(x))
+                .ToListAsync();
         }
 
         [HttpPost]
-        public async Task<ActionResult<InventoryItem>> PostInventoryItem(InventoryItem inventoryItem)
+        public async Task<ActionResult<InventoryItemDTO>> PostInventoryItem(InventoryItemDTO inventoryItemDto)
         {
+            var inventoryItem = new InventoryItem
+            {
+                Name = inventoryItemDto.Name,
+                Description = inventoryItemDto.Description
+            };
             _context.InventoryItems.Add(inventoryItem);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetInventoryItem), new { id = inventoryItem.Id }, inventoryItem);
+            return CreatedAtAction(
+                nameof(GetInventoryItem),
+                new { id = inventoryItem.Id },
+                InventoryItemToDTO(inventoryItem)
+            );
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<InventoryItem>> GetInventoryItem(long id)
+        public async Task<ActionResult<InventoryItemDTO>> GetInventoryItem(long id)
         {
             var inventoryItem = await _context.InventoryItems.FindAsync(id);
 
@@ -43,33 +54,33 @@ namespace AspNetCoreWebAPI8.Controllers {
                 return NotFound();
             }
 
-            return inventoryItem;
+            return InventoryItemToDTO(inventoryItem);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutInventoryItem(long id, InventoryItem inventoryItem)
+        public async Task<IActionResult> PutInventoryItem(long id, InventoryItemDTO inventoryItemDto)
         {
-            if (id != inventoryItem.Id)
+            if (id != inventoryItemDto.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(inventoryItem).State = EntityState.Modified;
+            var inventoryItem = await _context.InventoryItems.FindAsync(id);
+            if (inventoryItem == null)
+            {
+                return NotFound();
+            }
+
+            inventoryItem.Name = inventoryItemDto.Name;
+            inventoryItem.Description = inventoryItemDto.Description;
 
             try
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException) when (!InventoryItemExists(id))
             {
-                if (!InventoryItemExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
             return NoContent();
@@ -94,6 +105,14 @@ namespace AspNetCoreWebAPI8.Controllers {
         {
             return _context.InventoryItems.Any(e => e.Id == id);
         }
+
+        private static InventoryItemDTO InventoryItemToDTO(InventoryItem inventoryItem) =>
+            new InventoryItemDTO
+            {
+                Id = inventoryItem.Id,
+                Name = inventoryItem.Name,
+                Description = inventoryItem.Description
+            };
 
     }
 
