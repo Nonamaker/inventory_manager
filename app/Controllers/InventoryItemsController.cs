@@ -46,6 +46,40 @@ namespace AspNetCoreWebAPI8.Controllers {
             return inventoryItem;
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutInventoryItem(long id, InventoryItem inventoryItem)
+        {
+            if (id != inventoryItem.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(inventoryItem).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!InventoryItemExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        private bool InventoryItemExists(long id)
+        {
+            return _context.InventoryItems.Any(e => e.Id == id);
+        }
+
     }
 
 }
