@@ -24,6 +24,15 @@ namespace AspNetCoreWebAPI8.Controllers {
             return await _context.InventoryItems.ToListAsync();
         }
 
+        [HttpPost]
+        public async Task<ActionResult<InventoryItem>> PostInventoryItem(InventoryItem inventoryItem)
+        {
+            _context.InventoryItems.Add(inventoryItem);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetInventoryItem), new { id = inventoryItem.Id }, inventoryItem);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<InventoryItem>> GetInventoryItem(long id)
         {
