@@ -75,6 +75,21 @@ namespace AspNetCoreWebAPI8.Controllers {
             return NoContent();
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteInventoryItem(long id)
+        {
+            var inventoryItem = await _context.InventoryItems.FindAsync(id);
+            if (inventoryItem == null)
+            {
+                return NotFound();
+            }
+
+            _context.InventoryItems.Remove(inventoryItem);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         private bool InventoryItemExists(long id)
         {
             return _context.InventoryItems.Any(e => e.Id == id);
