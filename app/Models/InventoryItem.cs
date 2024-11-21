@@ -18,13 +18,12 @@ public class InventoryItem
 
 
     [Required(ErrorMessage = "Item name cannot be empty.")]
-
     public string Name { get; set; } = string.Empty;
 
 
     [Required(ErrorMessage = "Item description cannot be empty.")]
-
     public string Description { get; set; } = string.Empty;
 
+    public string? Secret { get; set; }
 
 }
