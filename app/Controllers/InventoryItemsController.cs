@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using app.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AspNetCoreWebAPI8.Controllers {
 
@@ -27,6 +28,7 @@ namespace AspNetCoreWebAPI8.Controllers {
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<InventoryItemDTO>> PostInventoryItem(InventoryItemDTO inventoryItemDto)
         {
             var inventoryItem = new InventoryItem
@@ -58,6 +60,7 @@ namespace AspNetCoreWebAPI8.Controllers {
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutInventoryItem(long id, InventoryItemDTO inventoryItemDto)
         {
             if (id != inventoryItemDto.Id)
@@ -87,6 +90,7 @@ namespace AspNetCoreWebAPI8.Controllers {
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteInventoryItem(long id)
         {
             var inventoryItem = await _context.InventoryItems.FindAsync(id);
