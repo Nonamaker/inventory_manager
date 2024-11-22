@@ -17,6 +17,9 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>()
 
 var app = builder.Build();
 
+app.UseCors(policy => policy.AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowAnyOrigin());
 app.MapIdentityApi<IdentityUser>();
 //app.UseHttpsRedirection();
 app.MapControllers();
