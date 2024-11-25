@@ -34,7 +34,8 @@ namespace AspNetCoreWebAPI8.Controllers {
             var inventoryItem = new InventoryItem
             {
                 Name = inventoryItemDto.Name,
-                Description = inventoryItemDto.Description
+                Description = inventoryItemDto.Description,
+                Inventory = inventoryItemDto.Inventory
             };
             _context.InventoryItems.Add(inventoryItem);
             await _context.SaveChangesAsync();
@@ -76,6 +77,7 @@ namespace AspNetCoreWebAPI8.Controllers {
 
             inventoryItem.Name = inventoryItemDto.Name;
             inventoryItem.Description = inventoryItemDto.Description;
+            inventoryItem.Inventory = inventoryItemDto.Inventory;
 
             try
             {
@@ -115,7 +117,8 @@ namespace AspNetCoreWebAPI8.Controllers {
             {
                 Id = inventoryItem.Id,
                 Name = inventoryItem.Name,
-                Description = inventoryItem.Description
+                Description = inventoryItem.Description,
+                Inventory = inventoryItem.Inventory
             };
 
     }

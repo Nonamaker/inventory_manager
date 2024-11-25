@@ -4,28 +4,24 @@ using System.ComponentModel.DataAnnotations;
 
 using System.ComponentModel.DataAnnotations.Schema;
 
+using Microsoft.AspNetCore.Identity;
+
 
 namespace app.Models;
 
-[Table("InventoryItems")]
+[Table("Inventories")]
 
-public class InventoryItem
+public class Inventory
 
 {
 
     [Key]
     public long Id { get; set; }
 
-    public Inventory? Inventory { get; set; } = null;
-
-
-    [Required(ErrorMessage = "Item name cannot be empty.")]
+    [Required(ErrorMessage = "Inventory name cannot be empty.")]
     public string Name { get; set; } = string.Empty;
+    public IdentityUser? Owner { get; set; } = null;
 
-
-    [Required(ErrorMessage = "Item description cannot be empty.")]
     public string Description { get; set; } = string.Empty;
-
-    public string? Secret { get; set; }
 
 }
