@@ -15,4 +15,5 @@ public class AppDbContext : IdentityDbContext<IdentityUser>
     }
 
     public virtual DbSet<InventoryItem> InventoryItems { get; set; }
+    public virtual DbSet<Inventory> Inventories { get; set; }
 }

@@ -16,6 +16,10 @@ public class InventoryItem
     [Key]
     public long Id { get; set; }
 
+    public long? InventoryId { get; set; }
+    [ForeignKey("InventoryId")]
+    public Inventory? Inventory { get; set; } = null;
+
 
     [Required(ErrorMessage = "Item name cannot be empty.")]
     public string Name { get; set; } = string.Empty;
