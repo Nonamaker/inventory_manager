@@ -23,7 +23,7 @@ namespace AspNetCoreWebAPI8.Controllers {
                 return NotFound();
             }
             return await _context.InventoryItems
-                .Select(x => InventoryItemToDTO(x))
+                .Select(x => new InventoryItemDTO(x))
                 .ToListAsync();
         }
 
@@ -31,19 +31,23 @@ namespace AspNetCoreWebAPI8.Controllers {
         [Authorize]
         public async Task<ActionResult<InventoryItemDTO>> PostInventoryItem(InventoryItemDTO inventoryItemDto)
         {
+            // TODO Ensure the user owns the indicated inventory
             var inventoryItem = new InventoryItem
             {
                 Name = inventoryItemDto.Name,
                 Description = inventoryItemDto.Description,
                 InventoryId = inventoryItemDto.InventoryId
             };
+
+            inventoryItem.Inventory = await _context.Inventories.FindAsync(inventoryItem.InventoryId);
+
             _context.InventoryItems.Add(inventoryItem);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(
                 nameof(GetInventoryItem),
                 new { id = inventoryItem.Id },
-                InventoryItemToDTO(inventoryItem)
+                new InventoryItemDTO(inventoryItem)
             );
         }
 
@@ -57,13 +61,14 @@ namespace AspNetCoreWebAPI8.Controllers {
                 return NotFound();
             }
 
-            return InventoryItemToDTO(inventoryItem);
+            return new InventoryItemDTO(inventoryItem);
         }
 
         [HttpPut("{id}")]
         [Authorize]
         public async Task<IActionResult> PutInventoryItem(long id, InventoryItemDTO inventoryItemDto)
         {
+            // TODO Make sure user owns the inventory
             if (id != inventoryItemDto.Id)
             {
                 return BadRequest();
@@ -78,6 +83,7 @@ namespace AspNetCoreWebAPI8.Controllers {
             inventoryItem.Name = inventoryItemDto.Name;
             inventoryItem.Description = inventoryItemDto.Description;
             inventoryItem.InventoryId = inventoryItemDto.InventoryId;
+            inventoryItem.Inventory = await _context.Inventories.FindAsync(inventoryItem.InventoryId);
 
             try
             {
@@ -111,15 +117,6 @@ namespace AspNetCoreWebAPI8.Controllers {
         {
             return _context.InventoryItems.Any(e => e.Id == id);
         }
-
-        private static InventoryItemDTO InventoryItemToDTO(InventoryItem inventoryItem) =>
-            new InventoryItemDTO
-            {
-                Id = inventoryItem.Id,
-                Name = inventoryItem.Name,
-                Description = inventoryItem.Description,
-                InventoryId = inventoryItem.InventoryId
-            };
 
     }
 

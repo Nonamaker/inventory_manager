@@ -29,6 +29,7 @@ namespace AspNetCoreWebAPI8.Controllers {
             {
                 return NotFound();
             }
+            // Only show inventories owned by the user
             IdentityUser currentUser = (await _userManager.GetUserAsync(HttpContext.User))!;
             return await _context.Inventories
                 .Where(x => x.Owner == currentUser)
@@ -40,11 +41,15 @@ namespace AspNetCoreWebAPI8.Controllers {
         [Authorize]
         public async Task<ActionResult<InventoryDTO>> PostInventory(InventoryDTO inventoryDto)
         {
+
+            IdentityUser currentUser = (await _userManager.GetUserAsync(HttpContext.User))!;
+
             var inventory = new Inventory
             {
                 Name = inventoryDto.Name,
                 Description = inventoryDto.Description,
-                Owner = await _userManager.GetUserAsync(HttpContext.User)
+                OwnerId = currentUser.Id,            
+                Owner = currentUser
             };
             _context.Inventories.Add(inventory);
             await _context.SaveChangesAsync();
@@ -59,9 +64,16 @@ namespace AspNetCoreWebAPI8.Controllers {
         [HttpGet("{id}")]
         public async Task<ActionResult<InventoryDTO>> GetInventory(long id)
         {
+            IdentityUser currentUser = (await _userManager.GetUserAsync(HttpContext.User))!;
+
             var inventory = await _context.Inventories.FindAsync(id);
 
             if (inventory == null)
+            {
+                return NotFound();
+            }
+            // Users can only acces inventories they own
+            if (inventory.Owner != currentUser )
             {
                 return NotFound();
             }
@@ -69,10 +81,35 @@ namespace AspNetCoreWebAPI8.Controllers {
             return InventoryToDTO(inventory);
         }
 
+
+        [HttpGet("{id}/contents")]
+        public async Task<ActionResult<IEnumerable<InventoryItemDTO>>> GetInventoryContents(long id)
+        {
+            IdentityUser currentUser = (await _userManager.GetUserAsync(HttpContext.User))!;
+
+            var inventory = await _context.Inventories.FindAsync(id);
+
+            if (inventory == null)
+            {
+                return NotFound();
+            }
+            // Users can only acces inventories they own
+            if (inventory.Owner != currentUser )
+            {
+                return NotFound();
+            }
+
+            return await _context.InventoryItems
+                .Where(x => x.InventoryId == id)
+                .Select(x => new InventoryItemDTO(x))
+                .ToListAsync();
+        }
+
         [HttpPut("{id}")]
         [Authorize]
         public async Task<IActionResult> PutInventory(long id, InventoryDTO inventoryDto)
         {
+            // TODO Make sure user owns the inventory
             if (id != inventoryDto.Id)
             {
                 return BadRequest();

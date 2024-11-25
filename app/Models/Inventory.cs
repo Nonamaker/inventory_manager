@@ -20,8 +20,9 @@ public class Inventory
 
     [Required(ErrorMessage = "Inventory name cannot be empty.")]
     public string Name { get; set; } = string.Empty;
-    public IdentityUser? Owner { get; set; } = null;
-
     public string Description { get; set; } = string.Empty;
+    public string? OwnerId { get; set; }
+    [ForeignKey("OwnerId")]
+    public IdentityUser? Owner { get; set; } = null;
 
 }
